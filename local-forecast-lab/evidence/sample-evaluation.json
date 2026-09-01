@@ -1,0 +1,218 @@
+{
+  "generatedAt": "2026-09-01T18:51:13.760Z",
+  "method": "Dependency-free deterministic ingestion, schema inference, normalization, validation, and seasonal-naive rolling holdout.",
+  "reports": [
+    {
+      "file": "daily-sales.csv",
+      "extension": ".csv",
+      "table": "daily-sales",
+      "rows": 84,
+      "columns": [
+        "date",
+        "croissant_units",
+        "bun_units",
+        "cake_units",
+        "promotion_planned",
+        "public_holiday",
+        "weather_forecast_c"
+      ],
+      "schema": {
+        "mode": "wide",
+        "confidence": 0.9,
+        "timestampColumn": "date",
+        "entityColumns": [],
+        "targetColumns": [
+          "croissant_units",
+          "bun_units",
+          "cake_units"
+        ],
+        "pastCovariateColumns": [],
+        "futureCovariateColumns": [
+          "promotion_planned",
+          "public_holiday",
+          "weather_forecast_c"
+        ],
+        "horizon": 14,
+        "seasonality": 7
+      },
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "stats": {
+          "sourceRows": 84,
+          "acceptedRows": 84,
+          "targetSeries": 3,
+          "combinedVariates": 6,
+          "shortestTargetSeries": 84,
+          "frequency": {
+            "milliseconds": 86400000,
+            "label": "daily",
+            "regularity": 1,
+            "deltaMad": 0,
+            "observations": 84
+          }
+        }
+      },
+      "baseline": [
+        {
+          "seriesId": "bun_units",
+          "holdout": 14,
+          "metrics": {
+            "wape": 0.050125100365365396,
+            "mase": 1.013337320356212,
+            "pinballMedian": 2.1392676763075587,
+            "intervalCoverage10to90": 0.9285714285714286
+          }
+        },
+        {
+          "seriesId": "cake_units",
+          "holdout": 14,
+          "metrics": {
+            "wape": 0.06896551724137931,
+            "mase": 0.6923076923076923,
+            "pinballMedian": 0.5714285714285714,
+            "intervalCoverage10to90": 1
+          }
+        },
+        {
+          "seriesId": "croissant_units",
+          "holdout": 14,
+          "metrics": {
+            "wape": 0.035918992757326705,
+            "mase": 0.5747038841172273,
+            "pinballMedian": 0.9852066584866753,
+            "intervalCoverage10to90": 1
+          }
+        }
+      ]
+    },
+    {
+      "file": "daily-load.txt",
+      "extension": ".txt",
+      "table": "daily-load",
+      "rows": 70,
+      "columns": [
+        "timestamp",
+        "load_kw",
+        "tariff_known"
+      ],
+      "schema": {
+        "mode": "wide",
+        "confidence": 0.9,
+        "timestampColumn": "timestamp",
+        "entityColumns": [],
+        "targetColumns": [
+          "load_kw"
+        ],
+        "pastCovariateColumns": [],
+        "futureCovariateColumns": [
+          "tariff_known"
+        ],
+        "horizon": 14,
+        "seasonality": 7
+      },
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "stats": {
+          "sourceRows": 70,
+          "acceptedRows": 70,
+          "targetSeries": 1,
+          "combinedVariates": 2,
+          "shortestTargetSeries": 70,
+          "frequency": {
+            "milliseconds": 86400000,
+            "label": "daily",
+            "regularity": 1,
+            "deltaMad": 0,
+            "observations": 70
+          }
+        }
+      },
+      "baseline": [
+        {
+          "seriesId": "load_kw",
+          "holdout": 14,
+          "metrics": {
+            "wape": 0.0816097948166544,
+            "mase": 1.51601641575307,
+            "pinballMedian": 5.0426109290104915,
+            "intervalCoverage10to90": 0.7142857142857143
+          }
+        }
+      ]
+    },
+    {
+      "file": "long-sensors.json",
+      "extension": ".json",
+      "table": "data",
+      "rows": 96,
+      "columns": [
+        "timestamp",
+        "sensor_id",
+        "pm25",
+        "occupancy"
+      ],
+      "schema": {
+        "mode": "long",
+        "confidence": 0.9,
+        "timestampColumn": "timestamp",
+        "entityColumns": [
+          "sensor_id"
+        ],
+        "targetColumns": [
+          "pm25"
+        ],
+        "pastCovariateColumns": [
+          "occupancy"
+        ],
+        "futureCovariateColumns": [],
+        "horizon": 24,
+        "seasonality": 24
+      },
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "warnings": [],
+        "stats": {
+          "sourceRows": 96,
+          "acceptedRows": 96,
+          "targetSeries": 2,
+          "combinedVariates": 4,
+          "shortestTargetSeries": 48,
+          "frequency": {
+            "milliseconds": 3600000,
+            "label": "hourly",
+            "regularity": 1,
+            "deltaMad": 0,
+            "observations": 48
+          }
+        }
+      },
+      "baseline": [
+        {
+          "seriesId": "meeting_room",
+          "holdout": 24,
+          "metrics": {
+            "wape": 0.10774928200735626,
+            "mase": null,
+            "pinballMedian": 0.8910416666666666,
+            "intervalCoverage10to90": 0.5
+          }
+        },
+        {
+          "seriesId": "office",
+          "holdout": 24,
+          "metrics": {
+            "wape": 0.1106100718587263,
+            "mase": null,
+            "pinballMedian": 0.7920833333333331,
+            "intervalCoverage10to90": 0.3333333333333333
+          }
+        }
+      ]
+    }
+  ]
+}

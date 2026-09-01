@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Local-only time-series data preparation and forecasting in the browser." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.sheetjs.com 'wasm-unsafe-eval'; connect-src 'self' blob: https://huggingface.co https://*.huggingface.co https://*.hf.co https://*.xethub.hf.co https://cdn.sheetjs.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>Local Forecast Lab</title>
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">Whyme Labs research prototype</p>
+      <h1>Local Forecast Lab</h1>
+      <p class="lede">Turn messy local files into inspectable time-series forecasts. Data processing, tool execution, language-model planning, and model inference stay inside the browser.</p>
+    </div>
+    <div class="privacy-card">
+      <strong>Local data boundary</strong>
+      <span>Uploaded data is not sent to a server. Model files may download on first use, then remain in browser storage.</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel compact">
+      <div class="section-heading">
+        <div>
+          <p class="step">Device gate</p>
+          <h2>Runtime capability</h2>
+        </div>
+      </div>
+      <p id="capabilitySummary" class="status working">Inspecting browser capabilities...</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="step">Step 1</p>
+          <h2>Load local data</h2>
+        </div>
+        <button id="loadSample" class="secondary">Use sample sales data</button>
+      </div>
+      <label id="dropZone" class="drop-zone">
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.xlsb,.ods,.csv,.tsv,.txt,.json" />
+        <span>Drop an Excel, CSV, TXT, or JSON file here, or choose a file.</span>
+        <small>Encrypted workbooks, macros, external connections, and layout-only sheets are rejected or require manual mapping.</small>
+      </label>
+      <div class="field-row">
+        <label>Table or sheet
+          <select id="tableSelect"></select>
+        </label>
+        <p id="dataStatus" class="status">No file loaded.</p>
+      </div>
+      <details open>
+        <summary>Data profile</summary>
+        <p id="profileSummary" class="muted"></p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Column</th><th>Missing</th><th>Numeric</th><th>Date</th><th>Unique</th><th>Examples</th></tr></thead>
+            <tbody id="profileBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="step">Step 2</p>
+          <h2>Approve the time-series schema</h2>
+        </div>
+      </div>
+      <div class="form-grid">
+        <label>Layout
+          <select id="modeSelect"><option value="wide">Wide</option><option value="long">Long</option></select>
+        </label>
+        <label>Timestamp
+          <select id="timestampSelect"></select>
+        </label>
+        <label>Entity columns
+          <select id="entitySelect" multiple size="5"></select>
+        </label>
+        <label>Forecast targets
+          <select id="targetSelect" multiple size="5"></select>
+        </label>
+        <label>Past-only covariates
+          <select id="pastSelect" multiple size="5"></select>
+        </label>
+        <label>Known-future covariates
+          <select id="futureSelect" multiple size="5"></select>
+        </label>
+        <label>Horizon
+          <input id="horizonInput" type="number" min="1" max="1024" value="14" />
+        </label>
+        <label>Seasonality
+          <input id="seasonalityInput" type="number" min="1" value="7" />
+        </label>
+      </div>
+      <ul id="schemaWarnings" class="warnings"></ul>
+      <details>
+        <summary>Canonical schema</summary>
+        <pre id="schemaJson"></pre>
+      </details>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="step">Optional</p>
+          <h2>Ask a local sub-1B planner</h2>
+        </div>
+        <div class="button-row">
+          <button id="inspectShell" class="secondary">Inspect with JustBash</button>
+          <button id="runPlanner">Run local planner</button>
+        </div>
+      </div>
+      <label>Forecasting intent
+        <textarea id="plannerGoal" rows="3" placeholder="Example: Forecast daily unit demand. Promotion and public-holiday columns are known in advance."></textarea>
+      </label>
+      <p id="plannerStatus" class="status">The deterministic proposal above works without loading an LLM. The optional planner uses Qwen3-0.6B through WebGPU or WASM.</p>
+      <details>
+        <summary>Bounded tool transcript</summary>
+        <pre id="shellLog">No commands executed.</pre>
+      </details>
+    </section>
+
+    <section class="panel accent">
+      <div class="section-heading">
+        <div>
+          <p class="step">Step 3</p>
+          <h2>Establish the baseline</h2>
+        </div>
+        <button id="runBaseline">Run local baseline</button>
+      </div>
+      <p>A seasonal-naive model with empirical quantiles runs first. TimesFM-3 should only be accepted when it beats this baseline on rolling historical tests or improves a defined decision cost.</p>
+      <p id="engineStatus" class="status">Ready.</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="step">Research path</p>
+          <h2>Load a locally converted TimesFM-3 artifact</h2>
+        </div>
+        <div class="button-row">
+          <button id="loadTimesfm" class="secondary">Load artifact</button>
+          <button id="runTimesfm" disabled>Run TimesFM-3</button>
+        </div>
+      </div>
+      <p>The app does not distribute TimesFM-3 weights. Export the licensed checkpoint with the included script, then select the manifest, ONNX graph, and external-data files together.</p>
+      <label class="inline-check"><input id="timesfmLicense" type="checkbox" /> I confirm I obtained the model artifact separately and may use it under its license.</label>
+      <label>TimesFM-3 artifact files
+        <input id="timesfmFiles" type="file" multiple accept=".json,.onnx,.data,.bin" />
+      </label>
+      <p id="timesfmStatus" class="status">No TimesFM-3 artifact loaded.</p>
+      <details>
+        <summary>Loaded model manifest</summary>
+        <pre id="modelManifest">No manifest loaded.</pre>
+      </details>
+    </section>
+
+    <section class="panel results-panel">
+      <div class="section-heading">
+        <div>
+          <p class="step">Output</p>
+          <h2>Forecast and evidence</h2>
+        </div>
+        <div class="button-row">
+          <button id="exportCsv" class="secondary" disabled>Export CSV</button>
+          <button id="exportJson" class="secondary" disabled>Export JSON</button>
+        </div>
+      </div>
+      <div id="resultSummary" class="result-summary"><p>Run a forecast to populate this section.</p></div>
+      <ul id="resultWarnings" class="warnings"></ul>
+      <label class="series-picker">Displayed series
+        <select id="seriesSelect"></select>
+      </label>
+      <canvas id="forecastCanvas" aria-label="Forecast chart"></canvas>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Series</th><th>Timestamp</th><th>Point</th><th>Q10</th><th>Q90</th></tr></thead>
+          <tbody id="resultTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Research prototype. Forecasts are estimates, not causal claims. Keep deterministic controls around financial, medical, safety, and industrial decisions.</p>
+  </footer>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
