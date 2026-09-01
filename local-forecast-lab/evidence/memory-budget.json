@@ -1,0 +1,56 @@
+{
+  "assumptions": {
+    "timesFmParameters": 330000000,
+    "qwenArtifactBytes": 570000000,
+    "sensitivityMultiplier": 1.55,
+    "note": "Weight and artifact bytes are lower bounds. The 1.55 multiplier is a planning sensitivity, not a measured browser peak."
+  },
+  "variants": [
+    {
+      "name": "TimesFM-3 FP32",
+      "bytes": 1320000000,
+      "gib": 1.2293457984924316
+    },
+    {
+      "name": "TimesFM-3 FP16",
+      "bytes": 660000000,
+      "gib": 0.6146728992462158
+    },
+    {
+      "name": "TimesFM-3 INT8 weights only",
+      "bytes": 330000000,
+      "gib": 0.3073364496231079
+    },
+    {
+      "name": "TimesFM-3 INT4 weights only",
+      "bytes": 165000000,
+      "gib": 0.15366822481155396
+    },
+    {
+      "name": "Qwen3-0.6B q4f16 browser artifact",
+      "bytes": 570000000,
+      "gib": 0.5308538675308228
+    }
+  ],
+  "simultaneousWeightFloor": {
+    "name": "simultaneous",
+    "bytes": 735000000,
+    "gib": 0.6845220923423767
+  },
+  "serializedWeightFloor": {
+    "name": "serialized",
+    "bytes": 570000000,
+    "gib": 0.5308538675308228
+  },
+  "simultaneousSensitivityAt1_55x": {
+    "name": "simultaneous-sensitivity",
+    "bytes": 1139250000,
+    "gib": 1.061009243130684
+  },
+  "serializedSensitivityAt1_55x": {
+    "name": "serialized-sensitivity",
+    "bytes": 883500000,
+    "gib": 0.8228234946727753
+  },
+  "recommendation": "Load the planner, produce a schema, unload it, then load TimesFM-3. Do not keep both models resident by default."
+}

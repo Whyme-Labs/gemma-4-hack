@@ -1,0 +1,9 @@
+{
+  "name": "Local Forecast Lab",
+  "short_name": "Forecast Lab",
+  "description": "Local-only time-series preparation and forecasting.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#edf0f5",
+  "theme_color": "#111827"
+}

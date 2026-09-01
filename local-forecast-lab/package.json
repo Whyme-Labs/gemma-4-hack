@@ -1,0 +1,27 @@
+{
+  "name": "local-forecast-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A Chromium-first, local-only forecasting workbench for arbitrary tabular time-series data.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.mjs",
+    "memory": "node scripts/memory-budget.mjs",
+    "validate": "npm run test && npm run samples && npm run memory",
+    "samples": "node scripts/evaluate-samples.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "just-bash": "3.4.2",
+    "onnxruntime-web": "1.29.0"
+  },
+  "devDependencies": {
+    "vite": "8.2.2"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
